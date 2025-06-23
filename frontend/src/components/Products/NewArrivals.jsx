@@ -119,7 +119,7 @@ const NewArrivals = () => {
 
   const scroll = (direction) => {
     const scrollAmount = direction === "left" ? -300 : 300;
-    scrollRef.current.scrollBy({ left: scrollAmount, behaviour: "smooth" });
+    scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
   };
 
   //   Update Scroll Buttons
