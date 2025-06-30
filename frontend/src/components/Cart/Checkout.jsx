@@ -24,7 +24,7 @@ const cart = {
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const [checkoutId, setCheckoutId] = useState(null)
+  const [checkoutId, setCheckoutId] = useState(null);
   const [shippingAddress, setShippingAddress] = useState({
     firstName: "",
     lastName: "",
@@ -40,10 +40,10 @@ const Checkout = () => {
     setCheckoutId(123);
   };
 
-  const handlePaymentSuccess = (details)=>{
+  const handlePaymentSuccess = (details) => {
     console.log("Payment Successful", details);
-    navigate("/order-confirmation")
-  }
+    navigate("/order-confirmation");
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto py-10 px-6 tracking-tighter">
@@ -173,16 +173,63 @@ const Checkout = () => {
           </div>
           <div className="mt-6">
             {!checkoutId ? (
-                <button type="submit" className="w-full bg-black text-white py-3 rounded">Continue to Payment</button>
-            ):(
-                <div>
-                    <h3 className="text-lg mb-4">Pay With Paypal</h3>
-                    {/* Paypal Component  */}
-                    <PayPalButton amount="100.00" onSuccess={handlePaymentSuccess} onError={(err) => alert("Payment Failed. Try Again!")} />
-                </div>
+              <button
+                type="submit"
+                className="w-full bg-black text-white py-3 rounded"
+              >
+                Continue to Payment
+              </button>
+            ) : (
+              <div>
+                <h3 className="text-lg mb-4">Pay With Paypal</h3>
+                {/* Paypal Component  */}
+                <PayPalButton
+                  amount="100.00"
+                  onSuccess={handlePaymentSuccess}
+                  onError={(err) => alert("Payment Failed. Try Again!")}
+                />
+              </div>
             )}
           </div>
         </form>
+      </div>
+      {/* Right Section  */}
+      <div className="bg-gray-50 p-6 rounded-lg">
+        <h3 className="text-lg mb-4">Order Summary</h3>
+        <div className="border-t py-4 mb-4 border-gray-200">
+          {cart.products.map((product, index) => (
+            <div
+              key={index}
+              className="flex items-start justify-between py-2 border-b border-gray-200"
+            >
+              <div className="flex items-start">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-20 h-24 object-cover mr-4"
+                />
+                <div>
+                  <h3 className="text-md ">{product.name}</h3>
+                  <p className="text-gray-500">Size : {product.size}</p>
+                  <p className="text-gray-500">Color : {product.color}</p>
+                  <p className="text-xl">${product.price?.toLocaleString()}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="flex justify-between items-center text-lg mb-4 ">
+          <p>Subtotal</p>
+          <p>${cart.totalPrice?.toLocaleString()}</p>
+        </div>
+        <div className="flex justify-between items-center text-lg ">
+          <p>Shipping </p>
+          <p>Free</p>
+        </div>
+        <div className="flex justify-between items-center text-lg mt-4 border-t border-gray-200 pt-4">
+          <p>Total</p>
+          <p>${cart.totalPrice?.toLocaleString()}</p> 
+        </div>
       </div>
     </div>
   );
