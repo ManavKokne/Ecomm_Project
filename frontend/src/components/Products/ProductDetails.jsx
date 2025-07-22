@@ -67,7 +67,7 @@ const ProductDetails = ({productId}) => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const productFetchId = productId || id;
-  console.log("Product Fetch ID:", productFetchId);
+  // console.log("Product Fetch ID:", productFetchId);
 
   useEffect(() => {
     if(productFetchId){

@@ -80,7 +80,7 @@ const Home = () => {
     const fetchBestSeller = async () => {
       try{
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/products/best-seller`);
-        console.log("Best Seller Response:", response.data); // Debugging
+        // console.log("Best Seller Response:", response.data); // Debugging
         setBestSellerProduct(response.data);
       }catch(err){
         console.error("Error fetching best seller:", err);
