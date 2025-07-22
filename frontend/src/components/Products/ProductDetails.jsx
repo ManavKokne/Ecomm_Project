@@ -1,67 +1,91 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import ProductGrid from "./ProductGrid";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchProductDetails, fetchSimilarProducts } from "../../redux/slices/productsSlice";
+import { addToCart } from "../../redux/slices/cartSlice";
+import { useParams } from "react-router-dom";
 
-const selectedProduct = {
-  name: "Stylish Jacket",
-  price: 120,
-  originalPrice: 150,
-  description: "This is a Stylish Jacket, Perfect for any Occasion",
-  brand: "FashionBrand",
-  material: "Leather",
-  sizes: ["S", "M", "L", "XL"],
-  colors: ["Red", "Black"],
-  images: [
-    {
-      url: "https://picsum.photos/500/500?random = 1",
-      altText: "Stylish Jacket 1",
-    },
-    {
-      url: "https://picsum.photos/500/500?random = 2",
-      altText: "Stylish Jacket 2",
-    },
-  ],
-};
+// * Dummy Data
+// const selectedProduct = {
+//   name: "Stylish Jacket",
+//   price: 120,
+//   originalPrice: 150,
+//   description: "This is a Stylish Jacket, Perfect for any Occasion",
+//   brand: "FashionBrand",
+//   material: "Leather",
+//   sizes: ["S", "M", "L", "XL"],
+//   colors: ["Red", "Black"],
+//   images: [
+//     {
+//       url: "https://picsum.photos/500/500?random = 1",
+//       altText: "Stylish Jacket 1",
+//     },
+//     {
+//       url: "https://picsum.photos/500/500?random = 2",
+//       altText: "Stylish Jacket 2",
+//     },
+//   ],
+// };
 
-const similarProducts = [
-    {
-        _id : 1,
-        name : "Product 1",
-        price : 100,
-        images : [{url : "https://picsum.photos/500/500?random=1"}],
-    },
-    {
-        _id : 2,
-        name : "Product 2",
-        price : 100,
-        images : [{url : "https://picsum.photos/500/500?random=2"}],
-    },
-    {
-        _id : 3,
-        name : "Product 3",
-        price : 100,
-        images : [{url : "https://picsum.photos/500/500?random=3"}],
-    },
-    {
-        _id : 4,
-        name : "Product 4",
-        price : 100,
-        images : [{url : "https://picsum.photos/500/500?random=4"}],
-    },
-]
+// const similarProducts = [
+//     {
+//         _id : 1,
+//         name : "Product 1",
+//         price : 100,
+//         images : [{url : "https://picsum.photos/500/500?random=1"}],
+//     },
+//     {
+//         _id : 2,
+//         name : "Product 2",
+//         price : 100,
+//         images : [{url : "https://picsum.photos/500/500?random=2"}],
+//     },
+//     {
+//         _id : 3,
+//         name : "Product 3",
+//         price : 100,
+//         images : [{url : "https://picsum.photos/500/500?random=3"}],
+//     },
+//     {
+//         _id : 4,
+//         name : "Product 4",
+//         price : 100,
+//         images : [{url : "https://picsum.photos/500/500?random=4"}],
+//     },
+// ]
 
-const ProductDetails = () => {
+const ProductDetails = ({productId}) => {
+  const {id} = useParams();
+  const dispatch = useDispatch();
+  const {selectedProduct, loading, error, similarProducts} = useSelector((state)=> state.products);
+  const {user, guestId} = useSelector((state) => state.auth);
   const [mainImage, setMainImage] = useState(null);
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
+  const productFetchId = productId || id;
+
+  useEffect(() => {
+    if(productFetchId){
+      dispatch(fetchProductDetails(productFetchId));
+      dispatch(fetchSimilarProducts({id : productFetchId}));
+    }else {
+    console.error("Product ID is missing");
+  }
+  }, [dispatch, productFetchId]);
+
   useEffect(() => {
     if (selectedProduct?.images?.length > 0) {
       setMainImage(selectedProduct.images[0].url);
     }
   }, [selectedProduct]);
+
+  if (!productFetchId) {
+    return <p>Error: Product ID is missing</p>;
+  }
 
   const handleQuantityChange = (action) => {
     if (action === "plus") setQuantity((prev) => prev + 1);
@@ -81,16 +105,42 @@ const ProductDetails = () => {
 
     setIsButtonDisabled(true);
 
-    setTimeout(() => {
+    dispatch(
+      addToCart({
+        productId : productFetchId,
+        quantity,
+        size : selectedSize,
+        color : selectedColor,
+        guestId,
+        userId : user?._id,        
+      })
+    ).then(() => {
       toast.success("Product Added to the Cart", {
-        duration: 1000,
+        duration : 1000,
+      })
+      .finally(() => {
+        setIsButtonDisabled(false);
       });
-      setIsButtonDisabled(false);
-    }, 500);
+    });
+
+    if(loading){
+      return <p>Loading...</p>
+    }
+    if(error){
+      return <p>Error : {error}</p>
+    }
+
+    // setTimeout(() => {
+    //   toast.success("Product Added to the Cart", {
+    //     duration: 1000,
+    //   });
+    //   setIsButtonDisabled(false);
+    // }, 500);
   };
 
   return (
     <section className="p-6">
+      {selectedProduct && (
       <div className="max-w-6xl mx-auto bg-white p-8 rounded-lg">
         <div className="flex flex-col md:flex-row">
           {/* Left Thumbnails  */}
@@ -240,6 +290,7 @@ const ProductDetails = () => {
             <ProductGrid products = {similarProducts}/>
         </div>
       </div>
+      )}
     </section>
   );
 };

@@ -309,7 +309,7 @@ router.get("/:id", async (req, res) => {
       });
     }
   } catch (err) {
-    console.error(error);
+    console.error(err);
     res.status(500).send("Server Error");
   }
 });

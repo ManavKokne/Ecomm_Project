@@ -44,6 +44,9 @@ export const fetchProductsByFilters = createAsyncThunk(
 export const fetchProductDetails = createAsyncThunk(
   "products/fetchProductDetails",
   async ({ id }) => {
+    if (!id) {
+      throw new Error("Product ID is required");
+    }
     const response = await axios.get(
       `${import.meta.env.VITE_BACKEND_URL}/api/products/${id}`
     );
@@ -56,7 +59,7 @@ export const updateProduct = createAsyncThunk(
   "products/updateProduct",
   async ({ id, productData }) => {
     const response = await axios.put(
-      `${import.meta.env.VITE_BACKEND_URL}/api/products?${id}`,
+      `${import.meta.env.VITE_BACKEND_URL}/api/products/${id}`,
       productData,
       {
         headers: {
@@ -74,7 +77,7 @@ export const fetchSimilarProducts = createAsyncThunk(
   "products/fetchSimilarProducts",
   async ({ id }) => {
     const response = await axios.get(
-      `${import.meta.env.VITE_BACKEND_URL}/api/products/similar/?${id}`
+      `${import.meta.env.VITE_BACKEND_URL}/api/products/similar/${id}`
     );
     return response.data;
   }
@@ -177,7 +180,7 @@ const productSlice = createSlice({
     })
     .addCase(fetchSimilarProducts.fulfilled, (state, action) =>{
         state.loading = false;
-        state.products = action.payload;
+        state.similarProducts = action.payload;
     })
     .addCase(fetchSimilarProducts.rejected, (state,action) =>{
         state.loading = false;
