@@ -67,10 +67,11 @@ const ProductDetails = ({productId}) => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const productFetchId = productId || id;
+  console.log("Product Fetch ID:", productFetchId);
 
   useEffect(() => {
     if(productFetchId){
-      dispatch(fetchProductDetails(productFetchId));
+      dispatch(fetchProductDetails({ id : productFetchId}));
       dispatch(fetchSimilarProducts({id : productFetchId}));
     }else {
     console.error("Product ID is missing");
