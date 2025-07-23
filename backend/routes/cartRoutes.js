@@ -48,7 +48,7 @@ router.post("/", async(req,res) => {
                 cart.products.push({
                     productId,
                     name : product.name,
-                    image : product.image,
+                    image : product.images[0].url,
                     price : product.price,
                     size,
                     color,
@@ -60,9 +60,7 @@ router.post("/", async(req,res) => {
             cart.totalPrice = cart.products.reduce((acc, item)=> acc+item.price * item.quantity, 0);
 
             await cart.save();
-            return res.status(200).json({
-            cart
-            })
+            return res.status(200).json(cart)
         }else{
             // Create a new cart for the guest or the user
             const newCart =await Cart.create({
