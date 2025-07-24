@@ -1,42 +1,61 @@
-import React from "react";
+import React, { useEffect } from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate} from "react-router-dom";
+import {clearCart} from "../redux/slices/cartSlice";
 
-const checkout = {
-  _id: "12345",
-  createdAt: new Date(),
-  checkoutItems: [
-    {
-      productId: "1",
-      name: "Jacket",
-      color: "black",
-      size: "M",
-      price: 140,
-      quantity: 1,
-      image: "https://picsum.photos/150?random=1",
-    },
-    {
-      productId: "2",
-      name: "Pants",
-      color: "black",
-      size: "L",
-      price: 200,
-      quantity: 2,
-      image: "https://picsum.photos/150?random=2",
-    },
-  ],
-  shippingAddress: {
-    address: "123 Fashion Street",
-    city: "New York",
-    country: "USA",
-  },
-};
-
-const calculateEstimatedDelivery = (createdAt) => {
-  const orderDate = new Date(createdAt);
-  orderDate.setDate(orderDate.getDate() + 10); //Add 10 days to the order date
-  return orderDate.toLocaleDateString();
-};
+// * Dummy Data
+// const checkout = {
+//   _id: "12345",
+//   createdAt: new Date(),
+//   checkoutItems: [
+//     {
+//       productId: "1",
+//       name: "Jacket",
+//       color: "black",
+//       size: "M",
+//       price: 140,
+//       quantity: 1,
+//       image: "https://picsum.photos/150?random=1",
+//     },
+//     {
+//       productId: "2",
+//       name: "Pants",
+//       color: "black",
+//       size: "L",
+//       price: 200,
+//       quantity: 2,
+//       image: "https://picsum.photos/150?random=2",
+//     },
+//   ],
+//   shippingAddress: {
+//     address: "123 Fashion Street",
+//     city: "New York",
+//     country: "USA",
+//   },
+// };
 
 const OrderConfirmationPage = () => {
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const {checkout} = useSelector((state) => state.checkout);
+
+  //Clear the cart when the order is confirmed
+  useEffect(()=>{
+    if(checkout && checkout._id){
+      dispatch(clearCart());
+      localStorage.removeItem("cart");
+    }else{
+      navigate("/my-orders");
+    }
+  }, [checkout, dispatch, navigate]);
+
+  const calculateEstimatedDelivery = (createdAt) => {
+    const orderDate = new Date(createdAt);
+    orderDate.setDate(orderDate.getDate() + 10); //Add 10 days to the order date
+    return orderDate.toLocaleDateString();
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white ">
       <h1 className="text-4xl font-bold text-center text-emerald-700 mb-8">
