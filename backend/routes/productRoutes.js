@@ -203,7 +203,8 @@ router.get("/", async (req, res) => {
     }
 
     if (size) {
-      query.size = { $in: size.split(",") };
+      const sizes = size.split(',').map(s => s.trim());
+      query.sizes = { $in: sizes };
     }
 
     if (color) {
