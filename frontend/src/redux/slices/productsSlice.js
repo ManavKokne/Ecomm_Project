@@ -43,7 +43,7 @@ export const fetchProductsByFilters = createAsyncThunk(
 
 export const fetchProductDetails = createAsyncThunk(
   "products/fetchProductDetails",
-  async ({ id }) => {
+  async (id) => {
     if (!id) {
       throw new Error("Product ID is required");
     }

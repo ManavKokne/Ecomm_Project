@@ -76,7 +76,7 @@ const ProductDetails = ({ productId }) => {
 
   useEffect(() => {
     if (productFetchId) {
-      dispatch(fetchProductDetails({ id: productFetchId }));
+      dispatch(fetchProductDetails(productFetchId ));
       dispatch(fetchSimilarProducts({ id: productFetchId }));
     } else {
       console.error("Product ID is missing");

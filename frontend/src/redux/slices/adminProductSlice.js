@@ -21,7 +21,7 @@ export const fetchAdminProducts = createAsyncThunk(
 export const createProduct = createAsyncThunk(
   "adminProducts/createProduct",
   async (productData) => {
-    const response = await axios.post(`${API_URL}/admin/products`,
+    const response = await axios.post(`${API_URL}/api/admin/products`,
       productData,
       {
         headers: {
@@ -34,7 +34,7 @@ export const createProduct = createAsyncThunk(
 
 // Async Thunk to update an existing product
 export const updateProduct = createAsyncThunk("adminProducts/updateProduct", async ({id, productData})=>{
-    const response = await axios.put(`${API_URL}/api/admin/products/${id}`,
+    const response = await axios.put(`${API_URL}/api/products/${id}`,
         productData,
         {
             headers : {
@@ -47,7 +47,7 @@ export const updateProduct = createAsyncThunk("adminProducts/updateProduct", asy
 
 // Async thunk to delete a product
 export const deleteProduct = createAsyncThunk("adminProducts/deleteProduct", async(id) =>{
-    await axios.delete(`${API_URL}/api/admin/products/${id}`,
+    await axios.delete(`${API_URL}/api/products/${id}`,
         {
             headers : {
                 Authorization : USER_TOKEN,
@@ -93,7 +93,7 @@ const adminProductSlice = createSlice({
         })
         //Delete Product
         .addCase(deleteProduct.fulfilled, (state,action)=>{
-            state.products = state.products.filter((product) => product._id !== action.payload._id)  
+            state.products = state.products.filter((product) => product._id !== action.payload)  
         })
     }
 });
